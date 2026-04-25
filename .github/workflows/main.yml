@@ -1,0 +1,41 @@
+name: Dark Discipline Automation
+
+on:
+  schedule:
+    # Yeh cron setup har din raat ke 12:00 AM (UTC) par chalega (24 ghante mein 1 baar)
+    - cron: '0 0 * * *' 
+  workflow_dispatch: # Taaki aap jab chahein manually bhi run kar sakein
+
+# Permissions zaroori hain taki bot repo mein history.txt ko update aur files delete kar sake
+permissions:
+  contents: write
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install requests
+
+      - name: Run Main Automation
+        env:
+          SOCIAL_WEBHOOK_URL: ${{ secrets.SOCIAL_WEBHOOK_URL }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python main.py
+
+      - name: Commit System Changes
+        run: |
+          git config --global user.name "The Observer [Bot]"
+          git config --global user.email "observer@darkdiscipline.local"
+          git add history.txt videos/
+          # Agar koi change nahi hua toh error nahi aayega
+          git commit -m "Daily system log updated and old fragments purged" || echo "No changes to commit"
+          git push
