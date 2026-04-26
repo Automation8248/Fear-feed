@@ -123,20 +123,15 @@ def run_system():
     selected_caption = random.choice(CAPTIONS)
     repo_name = os.getenv('GITHUB_REPOSITORY')
     
+    # --- UPDATED FLAT PAYLOAD ---
     payload = {
         "video_name": video_file,
         "video_url": f"https://raw.githubusercontent.com/{repo_name}/main/videos/{video_file}",
+        "title": selected_caption,
         "caption": selected_caption,
-        "fb_payload": {
-            "text": f"{selected_caption}\n\n{FB_HASHTAGS}"
-        },
-        "ig_payload": {
-            "text": f"{selected_caption}\n.\n.\n{IG_HASHTAGS}"
-        },
-        "yt_payload": {
-            "title": f"{selected_caption} 👁️",
-            "description": f"{selected_caption}\n\n{YT_HASHTAGS}"
-        }
+        "facebook_hashtags": FB_HASHTAGS,
+        "instagram_hashtags": IG_HASHTAGS,
+        "youtube_hashtags": YT_HASHTAGS
     }
 
     # 4. Send to Webhook
